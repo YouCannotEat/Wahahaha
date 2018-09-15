@@ -1,175 +1,110 @@
-#include"game.h"
-void menu()//²Ëµ¥
+ï»¿#include"game.h"
+void menu()//èœå•
 {
 	system("color F9");
-	printf("\n\n\n\n\t\t»¶Ó­À´µ½2048");
+	printf("\n\n\n\t\tæ¬¢è¿æ¥åˆ°ä¸‰å­æ£‹");
 	Sleep(2000);
 	system("cls");
 	printf("\n\n\t****************************\n");
-	printf("\t****   1.¿ªÊ¼ÓÎÏ·      *****\n");
-	printf("\t****   0.ÍË³ö          *****\n");
+	printf("\t****   1.å¼€å§‹æ¸¸æˆ      *****\n");
+	printf("\t****   0.é€€å‡º          *****\n");
 }
-void Init(int arr[Row][Col], int rows, int cols, char f)//Êı×é³õÊ¼»¯
+int Sum_Meb(char arr[Row][Col], int row, int col, char f)
 {
-	memset(arr, f, rows*cols*16);
+	int count = 0;
+	int i = 0;
+	int j = 0;
+	for (i = 0; i < row; i++)
+		for (j = 0; j < col; j++)
+			if (arr[i][j] == f)
+				count++;
+	return count;
 }
-void Display(int arr[Row][Col], int row, int col)//ÏÔÊ¾
+
+//è¿”å›ç©å®¶æ˜¯å¦èµ¢äº†
+int Ret_Play(char arr[Row][Col], int row, int col, int f)
+{
+	int i = 0;
+	for (i = 0; i < row; i++)
+	{
+		if (arr[i][0] == arr[i][1] && arr[i][0] == arr[i][2] && arr[i][0] == f)
+		{
+			return 1;
+		}
+		else if (arr[0][i] == arr[1][i] && arr[1][i] == arr[2][i] && arr[2][i] == f)
+		{
+			return 1;
+		}
+	}
+	if (arr[0][0] == arr[1][1] && arr[1][1] == arr[2][2] && arr[1][1] == f)return 1;
+	if (arr[0][2] == arr[1][1] && arr[1][1] == arr[2][0] && arr[1][1] == f)return 1;
+	return 0;
+}
+void Init(char arr[Row][Col], int rows, int cols, char f)//æ•°ç»„åˆå§‹åŒ–
+{
+	memset(arr, f, rows*cols);
+}
+void Display(char arr[Row][Col], int row, int col)//æ˜¾ç¤º
 {
 	int i = 0;
 	int j = 0;
 	printf("\t\t\t");
 	for (i = 0; i < row; i++)
 	{
-		printf(" ______");
+		printf(" ___");
 	}
 	for (i = 0; i < row; i++)
 	{
 		printf("\n\t\t\t|");
 		for (j = 0; j < col; j++)
 		{
-			if (arr[i][j] == 0)
-				printf("_    _|");
-			else
-				printf("_%4d_|", arr[i][j]);
+			printf("_%c_|", arr[i][j]);
 		}
 	}
 }
-void NumMoveup(int arr[Row][Col], int row, int col,int ud)
-{
-	int i = 0;
-	int j = 0;
-	for (i = row-1; i >0; i--)
-	{
-		for (j = 0; j < col; j++)
-		{
-			if (arr[i - ud][j] == 0)
-			{
-				arr[i - ud][j] = arr[i][j];
-				arr[i][j] = 0;
-			}
-			else if (arr[i - ud][j] == arr[i][j])
-			{
-				arr[i - ud][j] = 2 * arr[i][j];
-				arr[i][j] = 0;
-			}
-		}
-	}
-}
-void NumMovedown(int arr[Row][Col], int row, int col, int ud)
-{
-	int i = 0;
-	int j = 0;
-	for (i = 0; i < row-1; i++)
-	{
-		for (j = 0; j < col; j++)
-		{
-			if (arr[i +ud][j] == 0)
-			{
-				arr[i +ud][j] = arr[i][j];
-				arr[i][j] = 0;
-			}
-			else if (arr[i + ud][j] == arr[i][j])
-			{
-				arr[i + ud][j] = 2 * arr[i][j];
-				arr[i][j] = 0;
-			}
-		}
-	}
-}
-void NumMoveleft(int arr[Row][Col], int row, int col, int lr)
-{
-	int i = 0;
-	int j = 0;
-	for (i = 0; i < row; i++)
-	{
-		for (j = col-1; j >0; j--)
-		{
-			if (arr[i][j-lr] == 0)
-			{
-				arr[i][j-lr] = arr[i][j];
-				arr[i][j] = 0;
-			}
-			else if (arr[i][j-lr] == arr[i][j])
-			{
-				arr[i][j-lr] = 2 * arr[i][j];
-				arr[i][j] = 0;
-			}
-		}
-	}
-}
-void NumMoveright(int arr[Row][Col], int row, int col, int lr)
-{
-	int i = 0;
-	int j = 0;
-	for (i = 0; i < row; i++)
-	{
-		for (j = 0; j < col-1; j++)
-		{
-			if (arr[i][j + lr] == 0)
-			{
-				arr[i][j + lr] = arr[i][j];
-				arr[i][j] = 0;
-			}
-			else if (arr[i][j + lr] == arr[i][j])
-			{
-				arr[i][j + lr] = 2 * arr[i][j];
-				arr[i][j] = 0;
-			}
-		}
-	}
-}
-void  PlayerGo(int arr[Row][Col], int row, int col)
-{
-	int  n = 0;
-	char a=0;
-	while (1)
-	{
-		if(getchar()=='\n')
-			printf("\n\n\t\tÇëÍæ¼ÒÊäÈëÉÏÏÂ×óÓÒÒÔ´Ë¶ÔÓ¦£¨WSAD£©£º>");
-		scanf("%c", &a);
-		if (a == 'A' || a == 'a')n = 3;
-		else if (a == 'S' || a == 's')n = 2;
-		else if (a == 'd' || a == 'D')n = 4;
-		else if (a == 'w' || a == 'W')n = 1;
-		switch (n)
-		{
-		case 1: NumMoveup(arr,row,col,1); break;
-		case 2:NumMovedown(arr,row,col,1); break;
-		case 3:NumMoveleft(arr, row, col, 1); break;
-		case 4:NumMoveright(arr, row, col, 1); break;
-		default:printf("ÊäÈë´íÎóÇëÖØĞÂÊäÈë\n"); n = 0; break;
-		}
-		if(n!=0)break;
-	}
-}
-char IsWin(int arr[Row][Col], int row, int col)
-{
-	int i = 0; int j = 0;
-	int count=0;
-	for (i = 0; i < row; i++)
-		for (j = 0; j < col; j++)
-		{
-			if (arr[i][j] == 2048)
-				return 'Y';
-			else if (arr[i][j] == 0)
-				count++;
-		}
-	if (count == 0) return 'N';
-	return '0';
-}
-void ComputerGo(int arr[Row][Col], int row, int col)
+//ç©å®¶åœ¨åˆé€‚ä½ç½®è½å­
+void PlayerGo(char show[Row][Col], int row, int col)
 {
 	int r = 0;
 	int c = 0;
-	//printf("\n\n\t\tÇëµçÄÔ×ß£º>\n");
 	while (1)
 	{
-		r = rand() % row;
-		c = rand() % col;
-		if (arr[r][c] == 0)
+		printf("\n\n\t\tè¯·ç©å®¶èµ°(å¦‚ 1 1)ï¼š>");
+		scanf("%d %d", &r, &c);
+		if (show[r - 1][c - 1] == ' ')
 		{
-			arr[r][c] = 2; 
-			Display(arr, row, col);
+			show[r - 1][c - 1] = 'X';
+			Display(show, row, col);
+			break;
+		}
+		else printf("è¾“å…¥é”™è¯¯\n");
+	}
+}
+//åˆ¤æ–­è¾“èµ¢
+char IsWin(char show[Row][Col], int row, int col)
+{
+	if (Sum_Meb(show, row, col, ' ') == 0)
+		return 'D';
+	else if (Ret_Play(show, row, col, 'X') == 1)
+		return 'Y';
+	else if (Ret_Play(show, row, col, 'O') == 1)
+		return 'N';
+	return 0;
+}
+//ç”µè„‘åœ¨åˆé€‚ä½ç½®éšæœºç”Ÿæˆéšæœºå€¼ï¼Œ
+void ComputerGo(char show[Row][Col], int row, int col)
+{
+	int r = 0;
+	int c = 0;
+	printf("\n\n\t\tè¯·ç”µè„‘èµ°ï¼š>\n");
+	while (1)
+	{
+		r = rand() % row + 1;
+		c = rand() % col + 1;
+		if (show[r][c] == ' ')
+		{
+			show[r][c] = 'O';
+			Display(show, row, col);
 			break;
 		}
 	}
